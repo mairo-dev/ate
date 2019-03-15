@@ -4,9 +4,10 @@ package com.mairo.ajp.http
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directive
 import akka.http.scaladsl.server.Directives.complete
-import com.mairo.ajp.dtos.{CreateTaskDtoIn, FailureMessage}
+import com.mairo.ajp.dtos.FailureMessage
+import com.mairo.ajp.dtos.task.CreateTaskDtoIn
+import com.mairo.ajp.validations.TaskValidators._
 import com.wix.accord._
-import com.mairo.ajp.validations.TaskValidations._
 
 /**
   * @author Roman Maiun  roman.maiun@unicorn.com

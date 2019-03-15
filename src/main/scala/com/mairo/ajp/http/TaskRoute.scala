@@ -8,7 +8,8 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.mairo.ajp.dtos.{CreateTaskDtoIn, TaskDescription}
+import com.mairo.ajp.dtos.general.TaskDescription
+import com.mairo.ajp.dtos.task.CreateTaskDtoIn
 import com.mairo.ajp.http.TaskDirective._
 import spray.json.{JsObject, JsString}
 
@@ -26,7 +27,7 @@ class TaskRoute(taskProcessor: ActorRef)
                 timeout: Timeout) extends JsonSupport {
 
   val taskRoute: Route =
-    pathPrefix("task") {
+    pathPrefix("tasks") {
       path("create") {
         post {
           entity(as[CreateTaskDtoIn]) { task =>
@@ -39,11 +40,21 @@ class TaskRoute(taskProcessor: ActorRef)
           }
         }
       } ~
+      path("get"/IntNumber){ taskId =>
+        get{
+          ???
+        }
+      }~
+      path("test"){
         get {
           val data = JsObject("authorId" -> JsString("animal"))
           val desc = TaskDescription("http://google.com", "GET", None, Some(data))
-          val task = CreateTaskDtoIn("TEST", ZonedDateTime.now(ZoneOffset.UTC).minusDays(2), ZonedDateTime.now(ZoneOffset.UTC), desc)
+          val task = CreateTaskDtoIn(
+            "TEST",
+            ZonedDateTime.now(ZoneOffset.UTC).minusDays(2),
+            ZonedDateTime.now(ZoneOffset.UTC), desc,None)
           complete(task)
         }
+      }
     }
 }

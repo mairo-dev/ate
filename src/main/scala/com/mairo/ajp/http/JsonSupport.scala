@@ -1,12 +1,10 @@
 package com.mairo.ajp.http
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import com.mairo.ajp.domains.TaskState.TaskState
-import com.mairo.ajp.domains.{Task, TaskState}
-import com.mairo.ajp.dtos.{CreateTaskDtoIn, CreateTaskDtoOut, FailureMessage, TaskDescription}
+import com.mairo.ajp.domains.{Retries, Task, TaskState}
+import com.mairo.ajp.dtos.FailureMessage
+import com.mairo.ajp.dtos.general.TaskDescription
+import com.mairo.ajp.dtos.task.{CreateTaskDtoIn, CreateTaskDtoOut}
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, RootJsonFormat}
 
 /**
@@ -15,14 +13,18 @@ import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsVa
   */
 
 trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
+
+  import com.mairo.ajp.http.DateMarshalling._
+
+
   implicit val taskStateFormat = new EnumJsonConverter(TaskState)
-  implicit val taskFormat = jsonFormat5(Task)
+  implicit val taskDescriptionFormat = jsonFormat4(TaskDescription)
+  implicit val taskRetriesFormat = jsonFormat3(Retries)
+  implicit val taskFormat = jsonFormat9(Task)
   implicit val failureMessage = jsonFormat2(FailureMessage)
-  implicit val zonedDateTimeFormat = new InstantJsonFormat()
 
-
-  implicit val commandDescriptionDtoFormat = jsonFormat4(TaskDescription)
-  implicit val createTaskDtoInFormat = jsonFormat4(CreateTaskDtoIn)
+  implicit val optionTaskDescriptionFormat = optionFormat[TaskDescription]
+  implicit val createTaskDtoInFormat = jsonFormat5(CreateTaskDtoIn)
   implicit val createTaskDtoOutFormat = jsonFormat2(CreateTaskDtoOut)
 
 
@@ -37,16 +39,16 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
     }
   }
 
-  class InstantJsonFormat extends RootJsonFormat[ZonedDateTime] {
-    val formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
-
-    def write(i: ZonedDateTime) =
-      JsString(formatter.format(i))
-
-    def read(value: JsValue) = value match {
-      case JsString(s) ⇒ ZonedDateTime.from(formatter.parse(s))
-      case _ ⇒ throw DeserializationException(s"String expected but got $value")
-    }
-  }
+  //  class InstantJsonFormat extends RootJsonFormat[ZonedDateTime] {
+  //    val formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
+  //
+  //    def write(i: ZonedDateTime) =
+  //      JsString(formatter.format(i))
+  //
+  //    def read(value: JsValue) = value match {
+  //      case JsString(s) ⇒ ZonedDateTime.from(formatter.parse(s))
+  //      case _ ⇒ throw DeserializationException(s"String expected but got $value")
+  //    }
+  //  }
 
 }
