@@ -3,6 +3,7 @@ package com.mairo.ajp.actors
 import java.util.UUID
 
 import akka.actor.{Actor, ActorLogging, Props}
+import com.mairo.ajp.actors.conf.ActorService
 import com.mairo.ajp.dtos.task.CreateTaskDtoIn
 
 /**
@@ -10,7 +11,7 @@ import com.mairo.ajp.dtos.task.CreateTaskDtoIn
   * @since 07.11.2018
   */
 
-class TaskProcessor extends Actor with ActorLogging {
+class TaskProcessor extends Actor with ActorLogging with ActorService{
   override def receive: Receive = {
     case x: CreateTaskDtoIn => sender ! UUID.randomUUID().toString
     case _ => sender() ! "DEFAULT BEHAVIOUR"
