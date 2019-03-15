@@ -12,7 +12,7 @@ object TaskValidators {
   lazy val httpMethods = Seq("GET", "POST", "PUT", "DELETE")
   implicit val localDateOrdering: Ordering[ZonedDateTime] = Ordering.by(_.toEpochSecond)
 
-  val validOptionTaskDescription: Validator[Option[TaskDescription]] = v1 => {
+  private val validOptionTaskDescription: Validator[Option[TaskDescription]] = v1 => {
     v1 match {
       case Some(td) =>
         if (td.uri.isEmpty) Failure(Set(RuleViolation(td.uri, "is empty")))
@@ -38,7 +38,7 @@ object TaskValidators {
   //  }
   //  }
 
-  def oneOf[T <: AnyRef](options: T*): Validator[T] =
+  private def oneOf[T <: AnyRef](options: T*): Validator[T] =
     new NullSafeValidator[T](
       test = options.contains,
       failure = x => Failure(Set(RuleViolation(x, s"is not one of (${options.mkString(",")})")))
