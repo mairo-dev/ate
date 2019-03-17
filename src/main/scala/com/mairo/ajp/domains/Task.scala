@@ -24,3 +24,4 @@ case class Task(id:Long,
 case class Retries(current:Int,
                    max:Int,
                    delays:List[Long])
+
